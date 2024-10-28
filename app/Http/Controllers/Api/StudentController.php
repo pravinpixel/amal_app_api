@@ -491,7 +491,7 @@ class StudentController extends Controller
     public function getEssentials(Request $request)
     {
         $type = $request->get('type');
-        if ($type == 'student') {
+        if ($type == 'school') {
             $school = School::get();
             return $this->returnSuccess($school, 'School Retrived Successfully');
         } else if ($type == 'country') {
