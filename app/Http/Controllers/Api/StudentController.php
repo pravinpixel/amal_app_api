@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\School;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Models\Employee;
@@ -43,22 +44,15 @@ class StudentController extends Controller
         try {
 
             $validator = Validator::make($request->all(), [
-                'email' => [
-                    'required',
-                    'email',
-                    'regex:/^[a-zA-Z0-9._%+-]+@(starhealth|starinsurance)\.in$|^[a-zA-Z0-9._%+-]+@pixel-studios\.com$/'
-                ],
-                'token' => 'required|unique:employees',
+                'email' => 'required|email',
+                'studentId' => 'required',
             ]);
             if ($validator->fails()) {
                 $this->error = $validator->errors();
                 throw new \Exception('validation Error');
             }
-            $student = Student::where('email', $request->email)->first();
+            $student = Student::where('id', $request->studentId)->first();
             if ($student) {
-                if ($student->status == "completed" && $student->profile_photo != null && $student->passport_photo != null) {
-                    return $this->returnError(false, 'We had already received your entry and it is in review now', 400, 400);
-                }
                 $oneMinuteAgo = Carbon::now()->subMinute();
                 $oneHourAgo = Carbon::now()->subHour();
 
@@ -73,12 +67,13 @@ class StudentController extends Controller
                     ->count();
                 if ($onemiutecount < 3 && $onehourcount < 30) {
                     $otp = $this->generateOtp($student->id);
-                    $student->session_token = $request->token;
-                    $student->save();
+                    $student->otp = $otp;
+                    // $student->session_token = $request->token;
+                    // $student->save();
                     $data = explode('@', $student->email);
                     Mail::to($student->email)->send(new EmailVerfiy($otp, $data[0]));
-                    $student = student::find($student->id);
-                    $student->expired_date = Carbon::now()->addMinutes(1)->format('Y-m-d H:i:s');
+                    // $student = student::find($student->id);
+                    $student->expired_date = Carbon::now()->addMinutes(5)->format('Y-m-d H:i:s');
                     $student->save();
                     $otpstore = new GenarateOtp();
                     $otpstore->email = $student->email;
@@ -89,20 +84,7 @@ class StudentController extends Controller
                 }
 
             } else {
-                $employee = new Student();
-                $employee->email = $request->input('email');
-                $employee->session_token = $request->token;
-                $employee->save();
-                $otp = $this->generateOtp($employee->id);
-                $data = explode('@', $employee->email);
-                Mail::to($employee->email)->send(new EmailVerfiy($otp, $data[0]));
-                $employee = Student::find($employee->id);
-                $employee->expired_date = Carbon::now()->addMinutes(1)->format('Y-m-d H:i:s');
-                $employee->save();
-                $otpstore = new GenarateOtp();
-                $otpstore->email = $employee->email;
-                $otpstore->otp = $employee->otp;
-                $otpstore->save();
+
             }
             LogHelper::AddLog('Employee', $employee->id, 'Otp Send', $otp, 'OTP genarate this ' . $employee->email);
             return $this->returnSuccess(
@@ -373,12 +355,13 @@ class StudentController extends Controller
     {
         $name = $request->filled('name') ? $request->get('name') : null;
         $dob = $request->filled('dob') ? $request->get('dob') : null;
-        if ($name && $dob) {
-            $student = Student::where(['name' => $name, 'dob' => $dob])->get();
+        $schoolId = $request->filled('schoolId') ? $request->get('schoolId') : null;
+        if ($name && $dob && $schoolId) {
+            $student = Student::where(['name' => $name, 'dob' => $dob, 'schoolId' => $schoolId])->get();
             if (count($student)) {
                 return $this->returnSuccess($student, 'Student Retrived Successfully');
             } else {
-                $students = Student::where('dob', $dob)->where('name', 'like', '%' . $name . '%')->get();
+                $students = Student::where(['schoolId' => $schoolId, 'dob' => $dob])->where('name', 'like', '%' . $name . '%')->get();
                 return $this->returnSuccess($students, 'Students Retrived Successfully');
             }
         } else {
@@ -443,6 +426,12 @@ class StudentController extends Controller
             }
         }
         return response()->json(['status' => true, 'message' => 'Student data uploaded successfully', 'itemsAdded' => $itemsAdded, 'errors' => $errors, 'alreadyExist' => $errorsData]);
+    }
+
+    public function getSchoolDetails(Request $request)
+    {
+        $school = School::get();
+        return $this->returnSuccess($school, 'School Retrived Successfully');
     }
 
 

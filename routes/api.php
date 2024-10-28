@@ -10,6 +10,7 @@ Route::get('/', function () {
 Route::group([
     'middleware' => 'api',
 ], function () {
+    Route::get('school', [StudentController::class, 'getSchoolDetails'])->name('getSchoolDetails');
     Route::get('student', [StudentController::class, 'getStudentDetails'])->name('getStudentDetails');
     Route::post('student', [StudentController::class, 'createStudent'])->name('createStudent');
     Route::post('studentData', [StudentController::class, 'uploadStudentData'])->name('uploadStudentData');
