@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicDetail;
+use App\Models\Otp;
+use App\Models\ProfessionalDetail;
 use App\Models\School;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -55,27 +58,21 @@ class StudentController extends Controller
             if ($student) {
                 $oneMinuteAgo = Carbon::now()->subMinute();
                 $oneHourAgo = Carbon::now()->subHour();
-
-                // Count OTPs generated within the last minute
-                $onemiutecount = GenarateOtp::where('email', $student->email)
+                $onemiutecount = Otp::where('email', $student->email)
                     ->where('created_at', '>=', $oneMinuteAgo)
                     ->count();
-
-                // Count OTPs generated within the last hour
-                $onehourcount = GenarateOtp::where('email', $student->email)
+                $onehourcount = Otp::where('email', $student->email)
                     ->where('created_at', '>=', $oneHourAgo)
                     ->count();
                 if ($onemiutecount < 3 && $onehourcount < 30) {
                     $otp = $this->generateOtp($student->id);
                     $student->otp = $otp;
-                    // $student->session_token = $request->token;
-                    // $student->save();
                     $data = explode('@', $student->email);
                     Mail::to($student->email)->send(new EmailVerfiy($otp, $data[0]));
-                    // $student = student::find($student->id);
-                    $student->expired_date = Carbon::now()->addMinutes(5)->format('Y-m-d H:i:s');
+                    $student->otpExpiredDate = Carbon::now()->addMinutes(5)->format('Y-m-d H:i:s');
                     $student->save();
-                    $otpstore = new GenarateOtp();
+                    $otpstore = new Otp();
+                    $otpstore->studentId = $student->id;
                     $otpstore->email = $student->email;
                     $otpstore->otp = $student->otp;
                     $otpstore->save();
@@ -84,9 +81,8 @@ class StudentController extends Controller
                 }
 
             } else {
-
+                return $this->returnError('Invalid student id');
             }
-            LogHelper::AddLog('Employee', $employee->id, 'Otp Send', $otp, 'OTP genarate this ' . $employee->email);
             return $this->returnSuccess(
                 [],
                 'OTP send successfully'
@@ -108,85 +104,20 @@ class StudentController extends Controller
         $student->save();
         return $code;
     }
-    public function resendOtp(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'email' => [
-                    'required',
-                    'email',
-                    'regex:/^[a-zA-Z0-9._%+-]+@(starhealth|starinsurance)\.in$|^[a-zA-Z0-9._%+-]+@pixel-studios\.com$/'
-                ],
-                'token' => 'required|unique:employees',
-            ]);
-            if ($validator->fails()) {
-                $this->error = $validator->errors();
-                throw new \Exception('validation Error');
-            }
-            $employee = Employee::where('email', $request->email)->first();
-            if ($employee->session_token != $request->token) {
-                Log::error('Session token mismatch for email: ' . $request->email);
-                return $this->returnError('Session token is wrong');
-            }
-            if ($employee) {
-                $oneMinuteAgo = Carbon::now()->subMinute();
-                $oneHourAgo = Carbon::now()->subHour();
 
-                // Count OTPs generated within the last minute
-                $onemiutecount = GenarateOtp::where('email', $employee->email)
-                    ->where('created_at', '>=', $oneMinuteAgo)
-                    ->count();
-
-                // Count OTPs generated within the last hour
-                $onehourcount = GenarateOtp::where('email', $employee->email)
-                    ->where('created_at', '>=', $oneHourAgo)
-                    ->count();
-
-                if ($onemiutecount < 3 && $onehourcount < 30) {
-                    $otp = $this->generateOtp($employee->id);
-                    $employee->save();
-                    $data = explode('@', $employee->email);
-                    Mail::to($employee->email)->send(new EmailVerfiy($otp, $data[0]));
-                    $employee = Employee::find($employee->id);
-                    $employee->expired_date = Carbon::now()->addMinutes(1)->format('Y-m-d H:i:s');
-                    $employee->save();
-                    $otpstore = new GenarateOtp();
-                    $otpstore->email = $employee->email;
-                    $otpstore->otp = $employee->otp;
-                    $otpstore->save();
-                    LogHelper::AddLog('Employee', $employee->id, 'Otp Send', $otp, ' Resend OTP genarate this ' . $employee->email);
-                } else {
-                    return $this->returnError('Your otp limit reached.Please try after somethime.');
-                }
-            } else {
-                return $this->returnError('Employee not found');
-            }
-            return $this->returnSuccess(
-                [],
-                'Resend OTP send successfully'
-            );
-        } catch (\Throwable $e) {
-            return $this->returnError($this->error ?? $e->getMessage());
-        }
-    }
 
     // Usage example:
 
 
-    public function otpverfiy(Request $request)
+    public function otpverify(Request $request)
     {
         try {
             DB::beginTransaction();
 
             // Validate request inputs
             $validator = Validator::make($request->all(), [
-                'email' => [
-                    'required',
-                    'email',
-                    'regex:/^[a-zA-Z0-9._%+-]+@(starhealth|starinsurance)\.in$|^[a-zA-Z0-9._%+-]+@pixel-studios\.com$/'
-                ],
+                'email' => 'required|email',
                 'otp' => 'required|size:4',
-                'token' => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -194,67 +125,29 @@ class StudentController extends Controller
                 Log::error('Validation Error: ' . json_encode($validator->errors()));
                 throw new \Exception('Validation Error');
             }
-
-            // Fetch the employee by email
-            $employee = Employee::where('email', $request->email)->first();
-            if (!$employee) {
-                Log::error('Employee not found for email: ' . $request->email);
-                return $this->returnError('Employee not found');
+            $student = Student::where('email', $request->email)->first();
+            if (!$student) {
+                Log::error('Student not found for email: ' . $request->email);
+                return $this->returnError('Student not found');
             }
-
-            // Check if OTP has expired
-            if (Carbon::parse($employee->expired_date)->lt(Carbon::now())) {
+            if (Carbon::parse($student->otpExpiredDate)->lt(Carbon::now())) {
                 Log::error('OTP has expired for email: ' . $request->email);
                 return $this->returnError('OTP has expired');
             }
 
-            if ($employee->session_token != $request->token) {
-                Log::error('Session token mismatch for email: ' . $request->email);
-                return $this->returnError('Session token is wrong');
-            } else {
-                $employee->session_token = null;
-            }
+            // if ($employee->session_token != $request->token) {
+            //     Log::error('Session token mismatch for email: ' . $request->email);
+            //     return $this->returnError('Session token is wrong');
+            // } else {
+            //     $employee->session_token = null;
+            // }
 
             // Verify OTP
-            if ($employee->otp == $request->otp) {
-                $employee->otp_verified = true;
-                if (!$employee->status) {
-                    $employee->status = 'basic';
-                }
-
-                // Invalidate old token if exists
-                if ($employee->token) {
-                    try {
-                        $token = new Token($employee->token);
-                        JWTAuth::setToken($token)->invalidate(true);
-                        Log::info('Token invalidated successfully for email: ' . $request->email);
-                    } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-                        Log::error('Token invalidation error for email: ' . $request->email . ' - ' . $e->getMessage());
-                        // Handle the case where token is already invalid
-                        // You can choose to continue or return an error response
-                    } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-                        Log::error('Token expiration error for email: ' . $request->email . ' - ' . $e->getMessage());
-                        // Handle token expired case
-                        // Set token to null after expiry
-                        $employee->token = null;
-                    } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-                        Log::error('JWT Exception for email: ' . $request->email . ' - ' . $e->getMessage());
-                        return $this->returnError('JWT Exception: ' . $e->getMessage());
-                    } catch (\Exception $e) {
-                        Log::error('General Exception during token invalidation for email: ' . $request->email . ' - ' . $e->getMessage());
-                        return $this->returnError('General Exception: ' . $e->getMessage());
-                    }
-                    // Regardless of success or failure, set token to null
-                    $employee->token = null;
-                }
-
-                // Generate new token
-                $newToken = JWTAuth::fromUser($employee);
-                $employee->token = $newToken;
-
-                // Save employee data
-                $employee->save();
-
+            if ($student->otp == $request->otp) {
+                $student->otpVerified = 1;
+                $student->save();
+                // // Generate new token
+                $newToken = JWTAuth::fromUser($student);
                 DB::commit();
                 Log::info('OTP verified and new token generated for email: ' . $request->email);
                 return $this->respondWithToken($newToken);
@@ -426,6 +319,76 @@ class StudentController extends Controller
             }
         }
         return response()->json(['status' => true, 'message' => 'Student data uploaded successfully', 'itemsAdded' => $itemsAdded, 'errors' => $errors, 'alreadyExist' => $errorsData]);
+    }
+
+    public function addAcademicDetails(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'studentId' => 'required|integer|exists:students,id',
+            'pursuing' => 'required|boolean',
+            'level' => 'required|string|max:100',
+            'institutionName' => 'required|string|max:100',
+            'course' => 'required|string|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors());
+        }
+        $academicDetail = AcademicDetail::where('studentId', $request->studentId)->first();
+        if ($academicDetail) {
+            $academicDetail->update([
+                'pursuing' => $request->pursuing,
+                'level' => $request->level,
+                'institutionName' => $request->institutionName,
+                'course' => $request->course,
+            ]);
+            return $this->returnSuccess($academicDetail, 'Academic Detail Updated Successfully');
+        } else {
+            $academicDetail = AcademicDetail::create([
+                'studentId' => $request->studentId,
+                'pursuing' => $request->pursuing,
+                'level' => $request->level,
+                'institutionName' => $request->institutionName,
+                'course' => $request->course,
+            ]);
+            return $this->returnSuccess($academicDetail, 'Academic Detail Added Successfully');
+        }
+
+    }
+
+    public function addProfessionalDetails(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'studentId' => 'required|integer|exists:students,id',
+            'type' => 'required|integer',
+            'organisation' => 'required|string|max:100',
+            'designation' => 'required|string|max:100',
+            'experience' => 'required|string|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors());
+        }
+        $professionalDetail = ProfessionalDetail::where('studentId', $request->studentId)->first();
+        if ($professionalDetail) {
+            $professionalDetail->update([
+                'type' => $request->type,
+                'organisation' => $request->organisation,
+                'designation' => $request->designation,
+                'experience' => $request->experience,
+            ]);
+            return $this->returnSuccess($professionalDetail, 'Professional Detail Updated Successfully');
+        } else {
+            $professionalDetail = ProfessionalDetail::create([
+                'studentId' => $request->studentId,
+                'type' => $request->type,
+                'organisation' => $request->organisation,
+                'designation' => $request->designation,
+                'experience' => $request->experience,
+            ]);
+            return $this->returnSuccess($professionalDetail, 'Professional Detail Added Successfully');
+        }
+
     }
 
     public function getSchoolDetails(Request $request)
