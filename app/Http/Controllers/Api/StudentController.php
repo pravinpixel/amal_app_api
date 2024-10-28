@@ -507,11 +507,11 @@ class StudentController extends Controller
     {
         $sessionToken = Str::random(60);
         $expiresAt = Carbon::now()->addMinutes(5); // Token expires in 120 minutes
-        SessionToken::create([
+        $session = SessionToken::create([
             'token' => $sessionToken,
             'expiry' => $expiresAt
         ]);
-        return $this->returnSuccess(['session_token' => $sessionToken, 'expires_at' => $expiresAt], 'Session Token Generated Successfully');
+        return $this->returnSuccess($session, 'Session Token Generated Successfully');
     }
 
 
