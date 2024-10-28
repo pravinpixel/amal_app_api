@@ -59,7 +59,7 @@
             <div class="card-header border-3 pt-6">
                 <div class="card-body pt-0">
                     <div class="row mt-12 mb-12" style="display: flex;justify-content:space-between;">
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <table>
                                 <tr>
                                     <th>As on date</th>
@@ -156,7 +156,8 @@
                                     <td>2</td>
                                 </tr>
                             </table>
-                        </div>
+                        </div> -->
+                        <p>Development In Progress....</p>
                     </div>
                 </div>
             </div>
