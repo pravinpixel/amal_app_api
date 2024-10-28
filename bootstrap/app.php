@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckReferer;
+use App\Http\Middleware\CheckSessionToken;
 use App\Http\Middleware\JWTExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -21,6 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // $middleware->group('api', [
         //     CheckReferer::class,
         // ]);
+        $middleware->group('session', [
+            CheckSessionToken::class,
+        ]);
         $middleware->group('auth:api', [
             JWTExceptionHandler::class,
         ]);

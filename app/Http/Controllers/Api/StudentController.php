@@ -10,6 +10,7 @@ use App\Models\Document;
 use App\Models\Otp;
 use App\Models\ProfessionalDetail;
 use App\Models\School;
+use App\Models\SessionToken;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Models\Employee;
@@ -210,7 +211,7 @@ class StudentController extends Controller
         return $this->returnSuccess($user, 'Employee data successfully retrieved');
     }
 
-    public function employeelogout()
+    public function studentlogout()
     {
         try {
             // Invalidate the token
@@ -502,7 +503,16 @@ class StudentController extends Controller
         }
     }
 
-
+    public function generateSessionToken(Request $request)
+    {
+        $sessionToken = Str::random(60);
+        $expiresAt = Carbon::now()->addMinutes(5); // Token expires in 120 minutes
+        SessionToken::create([
+            'token' => $sessionToken,
+            'expiry' => $expiresAt
+        ]);
+        return $this->returnSuccess(['session_token' => $sessionToken, 'expires_at' => $expiresAt], 'Session Token Generated Successfully');
+    }
 
 
 }
