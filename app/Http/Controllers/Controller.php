@@ -23,6 +23,13 @@ class Controller extends BaseController
         Storage::disk('public')->put($path, (string) $img);
         return $path;
     }
+    public function storeDocument($document, $folder)
+    {
+        $documentName = time() . '.' . $document->getClientOriginalExtension();
+        $path = $folder . '/' . $documentName;
+        Storage::disk('public')->put($path, (string) file_get_contents($document));
+        return $path;
+    }
 
     public function returnError($errors = false, $message = 'Error', $code = 400, $statuscode = '')
     {

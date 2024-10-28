@@ -10,7 +10,7 @@ Route::get('/', function () {
 Route::group([
     'middleware' => 'api',
 ], function () {
-    Route::get('school', [StudentController::class, 'getSchoolDetails'])->name('getSchoolDetails');
+    Route::get('essentials', [StudentController::class, 'getEssentials'])->name('getEssentials');
     Route::get('student', [StudentController::class, 'getStudentDetails'])->name('getStudentDetails');
     Route::post('student', [StudentController::class, 'createStudent'])->name('createStudent');
     Route::post('studentData', [StudentController::class, 'uploadStudentData'])->name('uploadStudentData');
@@ -23,6 +23,10 @@ Route::group([
         Route::prefix('student')->controller(StudentController::class)->group(function () {
             Route::post('/', 'viewStudent')->name('view');
             Route::post('/academic', 'addAcademicDetails')->name('addAcademicDetails');
+            Route::post('/professional', 'addProfessionalDetails')->name('addProfessionalDetails');
+            Route::post('/demographic', 'addDemographicDetails')->name('addDemographicDetails');
+            Route::post('/documents', 'addDocuments')->name('addDocuments');
+
         });
 
     });

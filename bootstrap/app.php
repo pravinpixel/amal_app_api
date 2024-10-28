@@ -18,9 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->group('auth', [
             Authenticate::class,
         ]);
-        $middleware->group('api', [
-            CheckReferer::class,
-        ]);
+        // $middleware->group('api', [
+        //     CheckReferer::class,
+        // ]);
         $middleware->group('auth:api', [
             JWTExceptionHandler::class,
         ]);

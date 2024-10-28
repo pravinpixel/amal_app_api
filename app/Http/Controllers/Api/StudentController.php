@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicDetail;
+use App\Models\Country;
+use App\Models\DemographicDetail;
+use App\Models\Document;
 use App\Models\Otp;
 use App\Models\ProfessionalDetail;
 use App\Models\School;
@@ -323,79 +326,183 @@ class StudentController extends Controller
 
     public function addAcademicDetails(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'studentId' => 'required|integer|exists:students,id',
-            'pursuing' => 'required|boolean',
-            'level' => 'required|string|max:100',
-            'institutionName' => 'required|string|max:100',
-            'course' => 'required|string|max:100',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'studentId' => 'required|integer|exists:students,id',
+                'pursuing' => 'required|boolean',
+                'level' => 'required|string|max:100',
+                'institutionName' => 'required|string|max:100',
+                'course' => 'required|string|max:100',
+            ]);
 
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors());
-        }
-        $academicDetail = AcademicDetail::where('studentId', $request->studentId)->first();
-        if ($academicDetail) {
-            $academicDetail->update([
-                'pursuing' => $request->pursuing,
-                'level' => $request->level,
-                'institutionName' => $request->institutionName,
-                'course' => $request->course,
-            ]);
-            return $this->returnSuccess($academicDetail, 'Academic Detail Updated Successfully');
-        } else {
-            $academicDetail = AcademicDetail::create([
-                'studentId' => $request->studentId,
-                'pursuing' => $request->pursuing,
-                'level' => $request->level,
-                'institutionName' => $request->institutionName,
-                'course' => $request->course,
-            ]);
-            return $this->returnSuccess($academicDetail, 'Academic Detail Added Successfully');
+            if ($validator->fails()) {
+                return $this->returnError($validator->errors());
+            }
+            $academicDetail = AcademicDetail::where('studentId', $request->studentId)->first();
+            if ($academicDetail) {
+                $academicDetail->update([
+                    'pursuing' => $request->pursuing,
+                    'level' => $request->level,
+                    'institutionName' => $request->institutionName,
+                    'course' => $request->course,
+                ]);
+                return $this->returnSuccess($academicDetail, 'Academic Detail Updated Successfully');
+            } else {
+                $academicDetail = AcademicDetail::create([
+                    'studentId' => $request->studentId,
+                    'pursuing' => $request->pursuing,
+                    'level' => $request->level,
+                    'institutionName' => $request->institutionName,
+                    'course' => $request->course,
+                ]);
+                return $this->returnSuccess($academicDetail, 'Academic Detail Added Successfully');
+            }
+
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
         }
 
     }
 
     public function addProfessionalDetails(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'studentId' => 'required|integer|exists:students,id',
-            'type' => 'required|integer',
-            'organisation' => 'required|string|max:100',
-            'designation' => 'required|string|max:100',
-            'experience' => 'required|string|max:100',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors());
-        }
-        $professionalDetail = ProfessionalDetail::where('studentId', $request->studentId)->first();
-        if ($professionalDetail) {
-            $professionalDetail->update([
-                'type' => $request->type,
-                'organisation' => $request->organisation,
-                'designation' => $request->designation,
-                'experience' => $request->experience,
+        try {
+            $validator = Validator::make($request->all(), [
+                'studentId' => 'required|integer|exists:students,id',
+                'type' => 'required|integer',
+                'organisation' => 'required|string|max:100',
+                'designation' => 'required|string|max:100',
+                'experience' => 'required|integer',
             ]);
-            return $this->returnSuccess($professionalDetail, 'Professional Detail Updated Successfully');
-        } else {
-            $professionalDetail = ProfessionalDetail::create([
-                'studentId' => $request->studentId,
-                'type' => $request->type,
-                'organisation' => $request->organisation,
-                'designation' => $request->designation,
-                'experience' => $request->experience,
-            ]);
-            return $this->returnSuccess($professionalDetail, 'Professional Detail Added Successfully');
-        }
 
+            if ($validator->fails()) {
+                return $this->returnError($validator->errors());
+            }
+            $professionalDetail = ProfessionalDetail::where('studentId', $request->studentId)->first();
+            if ($professionalDetail) {
+                $professionalDetail->update([
+                    'type' => $request->type,
+                    'organisation' => $request->organisation,
+                    'designation' => $request->designation,
+                    'experience' => $request->experience,
+                ]);
+                return $this->returnSuccess($professionalDetail, 'Professional Detail Updated Successfully');
+            } else {
+                $professionalDetail = ProfessionalDetail::create([
+                    'studentId' => $request->studentId,
+                    'type' => $request->type,
+                    'organisation' => $request->organisation,
+                    'designation' => $request->designation,
+                    'experience' => $request->experience,
+                ]);
+                return $this->returnSuccess($professionalDetail, 'Professional Detail Added Successfully');
+            }
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
     }
 
-    public function getSchoolDetails(Request $request)
+    public function addDemographicDetails(Request $request)
     {
-        $school = School::get();
-        return $this->returnSuccess($school, 'School Retrived Successfully');
+        try {
+            $validator = Validator::make($request->all(), [
+                'studentId' => 'required|integer|exists:students,id',
+                'residingInIndia' => 'required|integer',
+                'addressLine1' => 'required|string|max:255',
+                'addressLine2' => 'required|string|max:255',
+                'countryId' => 'required|integer',
+                'postalcode' => 'required|string|max:10',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->returnError($validator->errors());
+            }
+            $demographicDetail = DemographicDetail::where('studentId', $request->studentId)->first();
+            if ($demographicDetail) {
+                $demographicDetail->update([
+                    'residingInIndia' => $request->residingInIndia,
+                    'addressLine1' => $request->addressLine1,
+                    'addressLine2' => $request->addressLine2,
+                    'countryId' => $request->countryId,
+                    'postalcode' => $request->postalcode,
+                ]);
+                return $this->returnSuccess($demographicDetail, 'Demographic Detail Updated Successfully');
+            } else {
+                $demographicDetail = DemographicDetail::create([
+                    'studentId' => $request->studentId,
+                    'residingInIndia' => $request->residingInIndia,
+                    'addressLine1' => $request->addressLine1,
+                    'addressLine2' => $request->addressLine2,
+                    'countryId' => $request->countryId,
+                    'postalcode' => $request->postalcode,
+                ]);
+                return $this->returnSuccess($demographicDetail, 'Demographic Detail Added Successfully');
+            }
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
     }
+
+    public function addDocuments(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $validator = Validator::make($request->all(), [
+                'studentId' => 'required|integer|exists:students,id',
+                'profileImage' => 'nullable',
+                'documents' => 'nullable|array',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->returnError($validator->errors());
+            }
+            $student = Student::where('id', $request->studentId)->first();
+            if (!$student) {
+                return $this->returnError('Student Not Found');
+            }
+            if ($request->hasFile('profileImage')) {
+                $image = $request->file('profileImage');
+                $image = $request->file('profileImage');
+                $path = $this->storeImage($image, 'profile');
+                $student->image = $path;
+                $student->save();
+            }
+
+            if ($request->hasFile('documents')) {
+                for ($i = 0; $i < sizeof($request->documents); $i++) {
+                    $documents[$i] = $this->storeDocument(
+                        $request->file('documents')[$i],
+                        'documents'
+                    );
+                    $document = Document::create([
+                        'studentId' => $request->studentId,
+                        'document' => $documents[$i],
+                    ]);
+                }
+            }
+            DB::commit();
+            return $this->returnSuccess([], 'Document Added Successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->returnError($e->getMessage());
+        }
+    }
+
+    public function getEssentials(Request $request)
+    {
+        $type = $request->get('type');
+        if ($type == 'student') {
+            $school = School::get();
+            return $this->returnSuccess($school, 'School Retrived Successfully');
+        } else if ($type == 'country') {
+            $country = Country::get();
+            return $this->returnSuccess($country, 'Country Retrived Successfully');
+        } else {
+            return $this->returnError('Type Not Found');
+        }
+    }
+
+
 
 
 }
