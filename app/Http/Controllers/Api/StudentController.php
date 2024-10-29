@@ -7,7 +7,9 @@ use App\Models\AcademicDetail;
 use App\Models\Country;
 use App\Models\DemographicDetail;
 use App\Models\Document;
+use App\Models\EducationLevel;
 use App\Models\Otp;
+use App\Models\Profession;
 use App\Models\ProfessionalDetail;
 use App\Models\School;
 use App\Models\SessionToken;
@@ -518,6 +520,12 @@ class StudentController extends Controller
         } else if ($type == 'country') {
             $country = Country::get();
             return $this->returnSuccess($country, 'Country Retrived Successfully');
+        } else if ($type == 'profession') {
+            $profession = Profession::get();
+            return $this->returnSuccess($profession, 'Profession Retrived Successfully');
+        } else if ($type == 'level') {
+            $level = EducationLevel::get();
+            return $this->returnSuccess($level, 'Education Level Retrived Successfully');
         } else {
             return $this->returnError('Type Not Found');
         }

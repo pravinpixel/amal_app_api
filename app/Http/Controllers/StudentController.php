@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Country;
+use App\Models\EducationLevel;
 use App\Models\Profession;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -158,7 +159,8 @@ class StudentController extends Controller
         $result = Student::find($id);
         $professions = Profession::all();
         $countries = Country::all();
-        return view('student.action', ['student' => $result, 'professions' => $professions, 'countries' => $countries]);
+        $level = EducationLevel::all();
+        return view('student.action', ['student' => $result, 'professions' => $professions, 'countries' => $countries, 'levels' => $level]);
 
     }
 }

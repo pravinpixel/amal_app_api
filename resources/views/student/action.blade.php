@@ -257,46 +257,49 @@
                 <h3 class="card-title align-items-start flex-column">
                     <span class="card-label fw-bold fs-3 mb-1">Academic Details</span>
                 </h3>
-                @foreach ($student->academic as $academic)
+                @foreach ($student->academic as $key => $academic)
                     <div class="row mt-5">
                         <div class="col-md-6" style="display: flex">
                             <div class="col-md-5 mt-3">
                                 <label class="form-label">Pursuing Studies :</label>
                             </div>
                             <div class="col-md-5" style="display: flex">
-
-                                <div class="col-md-5 form-check  form-check-success form-check-solid">
-                                    <input class="form-check-input" type="radio" name="pursuing" value="1"
-                                        id="flexRadioActive" @if(isset($student) && isset($academic))
+                                <div class="col-md-5 form-check form-check-success form-check-solid">
+                                    <input class="form-check-input" type="radio" name="academic[{{ $key }}][pursuing]"
+                                        value="1" id="flexRadioActive" @if(isset($student) && isset($academic))
                                         @checked($academic->pursuing == 1) @else checked @endif />
                                     <label class="form-check-label" for="flexRadioActive">
                                         Yes
                                     </label>
                                 </div>
-                                <div class="col-md-3 g-6 form-check  form-check-danger form-check-solid">
-                                    <input class="form-check-input" type="radio" name="pursuing" value="0"
-                                        id="flexRadioInactive" @if(isset($student)) @checked($academic->pursuing == 0)
-                                        @endif />
+                                <div class="col-md-3 g-6 form-check form-check-danger form-check-solid">
+                                    <input class="form-check-input" type="radio" name="academic[{{ $key }}][pursuing]"
+                                        value="0" id="flexRadioInactive" @if(isset($student))
+                                        @checked($academic->pursuing == 0) @endif />
                                     <label class="form-check-label" for="flexRadioInactive">
                                         No
                                     </label>
                                 </div>
                                 <span class="field-error" style="color:red" id="pursuing-error"></span>
                             </div>
-
                         </div>
                         <div class="col-md-6" style="display: flex">
                             <div class="col-md-5 mt-3">
-                                <label class="form-label">Level of Education :</label>
+                                <label class="form-label">Level Of Education:</label>
                             </div>
                             <div class="col-md-7">
-                                <input type="text" name="level" placeholder="Level of Education"
-                                    class="required form-control" value="{{ $academic->level ?? '' }}" autocomplete="off"
-                                    id="levelInput" />
-                                <span class="field-error" style="color:red" id="level-error"></span>
+                                <select class="form-select" data-allow-clear="true" data-control="select2"
+                                    data-placeholder="Select Level Of Education" name="academic[{{ $key }}][level]">
+                                    <option value="">Select Level Of Education</option>
+                                    @foreach($levels as $level)
+                                        <option value="{{ $level->id }}" {{ isset($student) && $academic->level == $level->id ? 'selected' : '' }}>
+                                            {{ $level->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span class="field-error" style="color:red" id="type-error"></span>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="row mt-10 mb-20">
@@ -305,9 +308,9 @@
                                 <label class="form-label">Institution Name :</label>
                             </div>
                             <div class="col-md-7">
-                                <input type="text" name="institutionName" placeholder="Institution Name"
-                                    class="required form-control " value="{{ $academic->institutionName ?? '' }}"
-                                    autocomplete="off" />
+                                <input type="text" name="academic[{{ $key }}][institutionName]"
+                                    placeholder="Institution Name" class="required form-control"
+                                    value="{{ $academic->institutionName ?? '' }}" autocomplete="off" />
                                 <span class="field-error" style="color:red" id="institutionName-error"></span>
                             </div>
                         </div>
@@ -316,8 +319,9 @@
                                 <label class="form-label">Course :</label>
                             </div>
                             <div class="col-md-7">
-                                <input type="text" name="course" placeholder="Course" class="required form-control "
-                                    value="{{ $academic->course ?? '' }}" autocomplete="off" />
+                                <input type="text" name="academic[{{ $key }}][course]" placeholder="Course"
+                                    class="required form-control" value="{{ $academic->course ?? '' }}"
+                                    autocomplete="off" />
                                 <span class="field-error" style="color:red" id="course-error"></span>
                             </div>
                         </div>
@@ -328,7 +332,7 @@
                 <h3 class="card-title align-items-start flex-column ">
                     <span class="card-label fw-bold fs-3 mb-1">Professional Details</span>
                 </h3>
-                @foreach ($student->professional as $professional)
+                @foreach ($student->professional as $key => $professional)
                     <div class="row mt-10">
                         <div class="col-md-6" style="display: flex">
                             <div class="col-md-5 mt-3">
@@ -336,7 +340,7 @@
                             </div>
                             <div class="col-md-7">
                                 <select class="form-select" data-allow-clear="true" data-control="select2"
-                                    data-placeholder="Select Type" name="type">
+                                    data-placeholder="Select Type" name="professional[{{ $key }}][type]">
                                     <option value="">Select Type</option>
                                     @foreach($professions as $profession)
                                         <option value="{{ $profession->id }}" {{ isset($student) && $professional->type == $profession->id ? 'selected' : '' }}>
@@ -352,13 +356,12 @@
                                 <label class="form-label">Organisation :</label>
                             </div>
                             <div class="col-md-7">
-                                <input type="text" name="organisation" placeholder="Organisation"
+                                <input type="text" name="professional[{{ $key }}][organisation]" placeholder="Organisation"
                                     class="required form-control" value="{{ $professional->organisation ?? '' }}"
                                     autocomplete="off" id="organisationInput" />
                                 <span class="field-error" style="color:red" id="organisation-error"></span>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="row mt-10">
@@ -367,8 +370,8 @@
                                 <label class="form-label">Designation :</label>
                             </div>
                             <div class="col-md-7">
-                                <input type="text" name="designation" placeholder="Designation"
-                                    class="required form-control " value="{{ $professional->designation ?? '' }}"
+                                <input type="text" name="professional[{{ $key }}][designation]" placeholder="Designation"
+                                    class="required form-control" value="{{ $professional->designation ?? '' }}"
                                     autocomplete="off" />
                                 <span class="field-error" style="color:red" id="designation-error"></span>
                             </div>
@@ -378,8 +381,9 @@
                                 <label class="form-label">Experience :</label>
                             </div>
                             <div class="col-md-7">
-                                <input type="text" name="experience" placeholder="Experience" class="required form-control "
-                                    value="{{ $professional->experience ?? '' }}" autocomplete="off" />
+                                <input type="text" name="professional[{{ $key }}][experience]" placeholder="Experience"
+                                    class="required form-control" value="{{ $professional->experience ?? '' }}"
+                                    autocomplete="off" />
                                 <span class="field-error" style="color:red" id="experience-error"></span>
                             </div>
                         </div>
