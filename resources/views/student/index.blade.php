@@ -97,10 +97,10 @@
                                     Filter
                                 </button>
                             </div>
-                            <div>
+                            <!-- <div>
                                 <a type="button" class="btn btn-primary" href="{{url('student/create')}}">Create
                                     New</a>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     @include('student.filter')                    <div class="card-body pt-0">
@@ -122,7 +122,7 @@
                                         <th class="min-w-125px">Email</th>
                                         <th class="min-w-125px">Phone Number</th>
                                         <th class="min-w-115px">Status</th>
-                                        <th class="min-w-175px" style="text-align: center">View /Edit</th>
+                                        <th class="min-w-175px" style="text-align: center">View /Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody class="fw-semibold text-gray-600">
@@ -155,10 +155,10 @@
                                                         class="btn btn-icon btn-active-primary btn-light-primary mx-1 w-30px h-30px ">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
-                                                    <a href="{{route('student.edit', $student->id)}}"
-                                                        class="btn btn-icon btn-active-primary btn-light-primary mx-1 w-30px h-30px ">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                                    <!-- <a href="{{route('student.edit', $student->id)}}"
+                                                                                class="btn btn-icon btn-active-primary btn-light-primary mx-1 w-30px h-30px ">
+                                                                                <i class="fa fa-edit"></i>
+                                                                            </a> -->
                                                     <button type="button"
                                                         class="btn btn-icon btn-active-danger btn-light-danger mx-1 w-30px h-30px deletestudentBtn"
                                                         data-student-id="{{ $student->id }}">

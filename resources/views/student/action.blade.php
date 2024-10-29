@@ -328,7 +328,7 @@
                     </div>
                 @endforeach
             </div>
-            <div class="row mt-10 mb-10">
+            <div class="row mt-10 mb-20">
                 <h3 class="card-title align-items-start flex-column ">
                     <span class="card-label fw-bold fs-3 mb-1">Professional Details</span>
                 </h3>
@@ -391,7 +391,7 @@
                 @endforeach
             </div>
 
-            <div class="row mt-10 mb-10">
+            <div class="row mt-10 mb-20">
                 <h3 class="card-title align-items-start flex-column ">
                     <span class="card-label fw-bold fs-3 mb-1">Demographic Details</span>
                 </h3>

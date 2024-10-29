@@ -38,9 +38,11 @@ class StudentController extends Controller
     public function view(Request $request, $id)
     {
         try {
-            $result = Student::where('id', $id)->with('academic', 'professional')->first();
+            $result = Student::find($id);
             $professions = Profession::all();
-            return view('student.view', ['student' => $result, 'professions' => $professions]);
+            $countries = Country::all();
+            $level = EducationLevel::all();
+            return view('student.view', ['student' => $result, 'professions' => $professions, 'countries' => $countries, 'levels' => $level]);
 
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'errors' => $e->getMessage()], 422);

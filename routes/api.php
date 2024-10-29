@@ -7,6 +7,7 @@ Route::get('/', function () {
     return 'Welcome Amalorpavam Alumini';
 });
 Route::get('session', [StudentController::class, 'generateSessionToken'])->name('generateSessionToken');
+Route::get('createIdcard/{id}', [StudentController::class, 'createIdcard'])->name('createIdcard');
 
 
 Route::group([
