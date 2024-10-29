@@ -330,33 +330,43 @@ class StudentController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'studentId' => 'required|integer|exists:students,id',
-                'pursuing' => 'required|boolean',
-                'level' => 'required|string|max:100',
-                'institutionName' => 'required|string|max:100',
-                'course' => 'required|string|max:100',
+                'details' => 'required|array',
+                'details.*.id' => 'nullable|integer|exists:academic_details,id',
+                'details.*.pursuing' => 'required|boolean',
+                'details.*.level' => 'required|string|max:100',
+                'details.*.institutionName' => 'required|string|max:100',
+                'details.*.course' => 'required|string|max:100',
             ]);
 
             if ($validator->fails()) {
                 return $this->returnError($validator->errors());
             }
-            $academicDetail = AcademicDetail::where('studentId', $request->studentId)->first();
-            if ($academicDetail) {
-                $academicDetail->update([
-                    'pursuing' => $request->pursuing,
-                    'level' => $request->level,
-                    'institutionName' => $request->institutionName,
-                    'course' => $request->course,
-                ]);
-                return $this->returnSuccess($academicDetail, 'Academic Detail Updated Successfully');
-            } else {
-                $academicDetail = AcademicDetail::create([
-                    'studentId' => $request->studentId,
-                    'pursuing' => $request->pursuing,
-                    'level' => $request->level,
-                    'institutionName' => $request->institutionName,
-                    'course' => $request->course,
-                ]);
-                return $this->returnSuccess($academicDetail, 'Academic Detail Added Successfully');
+            $student = Student::where('id', $request->studentId)->first();
+            if (!$student) {
+                return $this->returnError('Student Not Found');
+            }
+            foreach ($request->details as $detail) {
+                if (isset($detail['id']) && (int) $detail['id']) {
+                    $academicDetail = AcademicDetail::where(['studentId' => $request->studentId, 'id' => $detail['id']])->first();
+                    if ($academicDetail) {
+                        $academicDetail->update([
+                            'pursuing' => $detail['pursuing'],
+                            'level' => $detail['level'],
+                            'institutionName' => $detail['institutionName'],
+                            'course' => $detail['course'],
+                        ]);
+                    }
+                } else {
+                    $academicDetail = AcademicDetail::create([
+                        'studentId' => $request->studentId,
+                        'pursuing' => $detail['pursuing'],
+                        'level' => $detail['level'],
+                        'institutionName' => $detail['institutionName'],
+                        'course' => $detail['course'],
+                    ]);
+                }
+
+                return $this->returnSuccess($student, 'Academic Detail Added Successfully');
             }
 
         } catch (\Exception $e) {
@@ -370,34 +380,44 @@ class StudentController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'studentId' => 'required|integer|exists:students,id',
-                'type' => 'required|integer',
-                'organisation' => 'required|string|max:100',
-                'designation' => 'required|string|max:100',
-                'experience' => 'required|integer',
+                'details' => 'required|array',
+                'details.*.id' => 'nullable|integer|exists:professional_details,id',
+                'details.*.type' => 'required|string|max:100',
+                'details.*.organisation' => 'required|string|max:100',
+                'details.*.designation' => 'required|string|max:100',
+                'details.*.experience' => 'required|string|max:100',
             ]);
 
             if ($validator->fails()) {
                 return $this->returnError($validator->errors());
             }
-            $professionalDetail = ProfessionalDetail::where('studentId', $request->studentId)->first();
-            if ($professionalDetail) {
-                $professionalDetail->update([
-                    'type' => $request->type,
-                    'organisation' => $request->organisation,
-                    'designation' => $request->designation,
-                    'experience' => $request->experience,
-                ]);
-                return $this->returnSuccess($professionalDetail, 'Professional Detail Updated Successfully');
-            } else {
-                $professionalDetail = ProfessionalDetail::create([
-                    'studentId' => $request->studentId,
-                    'type' => $request->type,
-                    'organisation' => $request->organisation,
-                    'designation' => $request->designation,
-                    'experience' => $request->experience,
-                ]);
-                return $this->returnSuccess($professionalDetail, 'Professional Detail Added Successfully');
+            $student = Student::where('id', $request->studentId)->first();
+            if (!$student) {
+                return $this->returnError('Student Not Found');
             }
+            foreach ($request->details as $detail) {
+                if (isset($detail['id']) && (int) $detail['id']) {
+                    $professionalDetail = ProfessionalDetail::where(['studentId' => $request->studentId, 'id' => $detail['id']])->first();
+                    if ($professionalDetail) {
+                        $professionalDetail->update([
+                            'type' => $detail['type'],
+                            'organisation' => $detail['organisation'],
+                            'designation' => $detail['designation'],
+                            'experience' => $detail['experience'],
+                        ]);
+                    }
+                } else {
+                    $professionalDetail = ProfessionalDetail::create([
+                        'studentId' => $request->studentId,
+                        'type' => $detail['type'],
+                        'organisation' => $detail['organisation'],
+                        'designation' => $detail['designation'],
+                        'experience' => $detail['experience'],
+                    ]);
+                }
+            }
+            return $this->returnSuccess($professionalDetail, 'Professional Detail Added Successfully');
+
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }

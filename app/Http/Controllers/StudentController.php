@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Country;
+use App\Models\Profession;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Storage;
@@ -35,8 +37,9 @@ class StudentController extends Controller
     public function view(Request $request, $id)
     {
         try {
-            $result = Student::find($id);
-            return view('student.view', ['student' => $result]);
+            $result = Student::where('id', $id)->with('academic', 'professional')->first();
+            $professions = Profession::all();
+            return view('student.view', ['student' => $result, 'professions' => $professions]);
 
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'errors' => $e->getMessage()], 422);
@@ -153,7 +156,9 @@ class StudentController extends Controller
     public function editStudent(Request $request, $id)
     {
         $result = Student::find($id);
-        return view('student.action', ['student' => $result]);
+        $professions = Profession::all();
+        $countries = Country::all();
+        return view('student.action', ['student' => $result, 'professions' => $professions, 'countries' => $countries]);
 
     }
 }

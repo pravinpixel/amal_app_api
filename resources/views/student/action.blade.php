@@ -28,7 +28,7 @@
 <div class="card mb-5 mb-xl-8">
     <div class="card-header border-0 pt-5">
         <h3 class="card-title align-items-start flex-column">
-            <span class="card-label fw-bold fs-3 mb-1">Student</span>
+            <span class="card-label fw-bold fs-3 mb-1">Basic Details</span>
         </h3>
         <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
             title="Click to add a user">
@@ -253,7 +253,220 @@
                     </div>
                 </div>
             </div>
-            <div class="row mt-5 mb-5">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label fw-bold fs-3 mb-1">Academic Details</span>
+            </h3>
+            <div class="row mt-5">
+                <div class="col-md-6" style="display: flex">
+                    <div class="col-md-5 mt-3">
+                        <label class="form-label">Pursuing Studies :</label>
+                    </div>
+                    <div class="col-md-5" style="display: flex">
+                        <div class="col-md-5 form-check  form-check-success form-check-solid">
+                            <input class="form-check-input" type="radio" name="pursuing" value="1" id="flexRadioActive"
+                                @if(isset($student)) @checked($student->academic->pursuing == 1) @else checked @endif />
+                            <label class="form-check-label" for="flexRadioActive">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="col-md-3 g-6 form-check  form-check-danger form-check-solid">
+                            <input class="form-check-input" type="radio" name="pursuing" value="0"
+                                id="flexRadioInactive" @if(isset($student)) @checked($student->academic->pursuing == 0)
+                                @endif />
+                            <label class="form-check-label" for="flexRadioInactive">
+                                No
+                            </label>
+                        </div>
+                        <span class="field-error" style="color:red" id="pursuing-error"></span>
+                    </div>
+
+                </div>
+                <div class="col-md-6" style="display: flex">
+                    <div class="col-md-5 mt-3">
+                        <label class="form-label">Level of Education :</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input type="text" name="level" placeholder="Level of Education" class="required form-control"
+                            value="{{ $student->academic->level ?? '' }}" autocomplete="off" id="levelInput" />
+                        <span class="field-error" style="color:red" id="level-error"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-10 mb-20">
+                <div class="col-md-6" style="display: flex">
+                    <div class="col-md-5 mt-3">
+                        <label class="form-label">Institution Name :</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input type="text" name="institutionName" placeholder="Institution Name"
+                            class="required form-control " value="{{ $student->academic->institutionName ?? '' }}"
+                            autocomplete="off" />
+                        <span class="field-error" style="color:red" id="institutionName-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-6" style="display: flex">
+                    <div class="col-md-5 mt-3">
+                        <label class="form-label">Course :</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input type="text" name="course" placeholder="Course" class="required form-control "
+                            value="{{ $student->academic->course ?? '' }}" autocomplete="off" />
+                        <span class="field-error" style="color:red" id="course-error"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-10 mb-10">
+                <h3 class="card-title align-items-start flex-column ">
+                    <span class="card-label fw-bold fs-3 mb-1">Professional Details</span>
+                </h3>
+                <div class="row mt-10">
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Type:</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-select" data-allow-clear="true" data-control="select2"
+                                data-placeholder="Select Type" name="type">
+                                <option value="">Select Type</option>
+                                @foreach($professions as $profession)
+                                    <option value="{{ $profession->id }}" {{ isset($student) && $student->professional->type == $profession->id ? 'selected' : '' }}>
+                                        {{ $profession->profession }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <span class="field-error" style="color:red" id="type-error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Organisation :</label>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" name="organisation" placeholder="Organisation"
+                                class="required form-control" value="{{ $student->professional->organisation ?? '' }}"
+                                autocomplete="off" id="organisationInput" />
+                            <span class="field-error" style="color:red" id="organisation-error"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row mt-10">
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Designation :</label>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" name="designation" placeholder="Designation"
+                                class="required form-control " value="{{ $student->professional->designation ?? '' }}"
+                                autocomplete="off" />
+                            <span class="field-error" style="color:red" id="designation-error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Experience :</label>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" name="experience" placeholder="Experience" class="required form-control "
+                                value="{{ $student->professional->experience ?? '' }}" autocomplete="off" />
+                            <span class="field-error" style="color:red" id="experience-error"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-10 mb-10">
+                <h3 class="card-title align-items-start flex-column ">
+                    <span class="card-label fw-bold fs-3 mb-1">Demographic Details</span>
+                </h3>
+                <div class="row mt-10">
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Are you residing in india: :</label>
+                        </div>
+                        <div class="col-md-5" style="display: flex">
+                            <div class="col-md-5 form-check  form-check-success form-check-solid">
+                                <input class="form-check-input" type="radio" name="residingInIndia" value="1"
+                                    id="flexRadioActive" @if(isset($student))
+                                    @checked($student->demographic->residingInIndia == 1) @else checked @endif />
+                                <label class="form-check-label" for="flexRadioActive">
+                                    Yes
+                                </label>
+                            </div>
+                            <div class="col-md-3 g-6 form-check  form-check-danger form-check-solid">
+                                <input class="form-check-input" type="radio" name="residingInIndia" value="0"
+                                    id="flexRadioInactive" @if(isset($student))
+                                    @checked($student->demographic->residingInIndia == 0) @endif />
+                                <label class="form-check-label" for="flexRadioInactive">
+                                    No
+                                </label>
+                            </div>
+                            <span class="field-error" style="color:red" id="residingInIndia-error"></span>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Address Line1 :</label>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" name="addressLine1" placeholder="Address Line1"
+                                class="required form-control" value="{{ $student->demographic->addressLine1 ?? '' }}"
+                                autocomplete="off" id="addressLine1Input" />
+                            <span class="field-error" style="color:red" id="addressLine1-error"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row mt-10">
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Address Line2 :</label>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" name="addressLine2" placeholder="Address Line2"
+                                class="required form-control " value="{{ $student->demographic->addressLine2 ?? '' }}"
+                                autocomplete="off" />
+                            <span class="field-error" style="color:red" id="addressLine2-error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Country:</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-select" data-allow-clear="true" data-control="select2"
+                                data-placeholder="Select Country" name="countryId">
+                                <option value="">Select Country</option>
+                                @foreach($countries as $country)
+                                    <option value="{{ $country->id }}" {{ isset($student) && $student->demographic->countryId == $country->id ? 'selected' : '' }}>
+                                        {{ $country->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <span class="field-error" style="color:red" id="country-error"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-10">
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Postal Code :</label>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" name="postalcode" placeholder="Postal Code"
+                                class="required form-control " value="{{ $student->demographic->postalcode ?? '' }}"
+                                autocomplete="off" />
+                            <span class="field-error" style="color:red" id="postalcode-error"></span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row mt-10 mb-5">
                 <div class="col-md-12 justify-content-end d-flex gap-10">
                     <a href="{{url('student')}}" type="button" class="btn btn-danger">Cancel</a>
                     <button id="student_submit" type="button" class="btn btn-primary" style="width: 87px">Save</button>
@@ -262,6 +475,7 @@
         </form>
     </div>
 </div>
+
 @endsection
 @section('script')
 @parent

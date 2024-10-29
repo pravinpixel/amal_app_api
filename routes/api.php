@@ -20,17 +20,19 @@ Route::group([
     Route::post('otpverify', [StudentController::class, 'otpverify'])->name('otpverify');
     Route::post('logout', [StudentController::class, 'studentlogout'])->name('studentlogout');
 
-    Route::group([
-        'middleware' => 'auth:api',
-    ], function () {
-        Route::prefix('student')->controller(StudentController::class)->group(function () {
-            Route::post('/', 'viewStudent')->name('view');
-            Route::post('/academic', 'addAcademicDetails')->name('addAcademicDetails');
-            Route::post('/professional', 'addProfessionalDetails')->name('addProfessionalDetails');
-            Route::post('/demographic', 'addDemographicDetails')->name('addDemographicDetails');
-            Route::post('/documents', 'addDocuments')->name('addDocuments');
 
-        });
+
+});
+
+Route::group([
+    'middleware' => 'auth:api',
+], function () {
+    Route::prefix('student')->controller(StudentController::class)->group(function () {
+        Route::post('/', 'viewStudent')->name('view');
+        Route::post('/academic', 'addAcademicDetails')->name('addAcademicDetails');
+        Route::post('/professional', 'addProfessionalDetails')->name('addProfessionalDetails');
+        Route::post('/demographic', 'addDemographicDetails')->name('addDemographicDetails');
+        Route::post('/documents', 'addDocuments')->name('addDocuments');
 
     });
 

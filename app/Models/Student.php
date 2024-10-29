@@ -40,6 +40,21 @@ class Student extends Authenticatable implements JWTSubject
         'status',
         'deleted',
     ];
+
+    public function academic()
+    {
+        return $this->hasMany(AcademicDetail::class, 'studentId', 'id');
+    }
+
+    public function professional()
+    {
+        return $this->hasMany(ProfessionalDetail::class, 'studentId', 'id');
+    }
+
+    public function demographic()
+    {
+        return $this->hasOne(DemographicDetail::class, 'studentId', 'id');
+    }
 }
 
 
