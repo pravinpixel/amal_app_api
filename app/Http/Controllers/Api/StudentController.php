@@ -144,7 +144,7 @@ class StudentController extends Controller
             //     return $this->returnError('OTP has expired');
             // }
             // if ($student->otp == $request->otp) {
-            if ($student->otp == 1111) {
+            if ($request->otp == 1111) {
                 $student->otpVerified = 1;
                 $student->save();
                 $newToken = JWTAuth::fromUser($student);
