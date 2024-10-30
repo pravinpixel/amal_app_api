@@ -158,7 +158,6 @@ class StudentController extends Controller
                     'access_token' => $newToken,
                     'token_type' => 'bearer',
                     'expires_in' => JWTAuth::factory()->getTTL(),
-                    'student' => $student
                 ], 'OTP verified successfully.');
             } else {
                 DB::rollback();
