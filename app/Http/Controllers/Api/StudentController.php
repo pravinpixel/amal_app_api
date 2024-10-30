@@ -97,7 +97,7 @@ class StudentController extends Controller
                 return $this->returnError('Invalid student id');
             }
             return $this->returnSuccess(
-                $student,
+                [],
                 'OTP send successfully'
             );
         } catch (\Throwable $e) {
@@ -154,7 +154,12 @@ class StudentController extends Controller
                 $newToken = JWTAuth::fromUser($student);
                 DB::commit();
                 Log::info('OTP verified and new token generated for email: ' . $request->email);
-                return $this->respondWithToken($newToken);
+                return $this->returnSuccess([
+                    'access_token' => $newToken,
+                    'token_type' => 'bearer',
+                    'expires_in' => JWTAuth::factory()->getTTL(),
+                    'student' => $student
+                ], 'OTP verified successfully.');
             } else {
                 DB::rollback();
                 Log::error('Invalid OTP entered for email: ' . $request->email);
