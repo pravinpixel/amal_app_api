@@ -57,13 +57,17 @@ class StudentController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
-                'studentId' => 'required',
+                'studentId' => 'nullable',
             ]);
             if ($validator->fails()) {
                 $this->error = $validator->errors();
                 throw new \Exception('validation Error');
             }
-            $student = Student::where('id', $request->studentId)->first();
+            if (!$request->studentId) {
+                $student = Student::where('email', $request->email)->first();
+            } else {
+                $student = Student::where('id', $request->studentId)->first();
+            }
             if ($student) {
                 $oneMinuteAgo = Carbon::now()->subMinute();
                 $oneHourAgo = Carbon::now()->subHour();
@@ -93,7 +97,7 @@ class StudentController extends Controller
                 return $this->returnError('Invalid student id');
             }
             return $this->returnSuccess(
-                [],
+                $student,
                 'OTP send successfully'
             );
         } catch (\Throwable $e) {
