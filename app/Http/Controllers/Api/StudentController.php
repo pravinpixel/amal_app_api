@@ -56,7 +56,8 @@ class StudentController extends Controller
         try {
 
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
+                'email' => 'nullable|email',
+                'phoneNumber' => 'nullable',
                 'studentId' => 'nullable',
             ]);
             if ($validator->fails()) {
@@ -80,8 +81,12 @@ class StudentController extends Controller
                 if ($onemiutecount < 3 && $onehourcount < 30) {
                     $otp = $this->generateOtp($student->id);
                     $student->otp = $otp;
-                    $data = explode('@', $student->email);
-                    Mail::to($student->email)->send(new EmailVerfiy($otp, $data[0]));
+                    if (isset($student->email) && $request->email) {
+                        $data = explode('@', $student->email);
+                        Mail::to($student->email)->send(new EmailVerfiy($otp, $data[0]));
+                    } else if (isset($student->phoneNumber) && $request->phoneNumber) {
+                        $this->sendSms($request->phoneNumber, $otp);
+                    }
                     $student->otpExpiredDate = Carbon::now()->addMinutes(5)->format('Y-m-d H:i:s');
                     $student->save();
                     $otpstore = new Otp();
@@ -531,7 +536,7 @@ class StudentController extends Controller
                     'postalcode' => $request->postalcode,
                 ]);
             }
-            $demographicDetailAfterUpdate = DemographicDetail::where('studentId', $request->studentId)->with('demographic')->first();
+            $demographicDetailAfterUpdate = Student::where('id', $request->studentId)->with('demographic')->first();
             $this->createActivityLog('DemographicDetail', $student->id, $student->id, $student, $demographicDetailAfterUpdate, 'Demographic Detail Updated');
 
             return $this->returnSuccess($demographicDetail, 'Demographic Detail Updated Successfully');
