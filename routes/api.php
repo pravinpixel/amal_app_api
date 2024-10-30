@@ -20,9 +20,6 @@ Route::group([
     Route::post('emailverify', [StudentController::class, 'emailverfiy'])->name('emailverfiy');
     Route::post('otpverify', [StudentController::class, 'otpverify'])->name('otpverify');
     Route::post('logout', [StudentController::class, 'studentlogout'])->name('studentlogout');
-
-
-
 });
 
 Route::group([
@@ -35,6 +32,7 @@ Route::group([
         Route::post('/professional', 'addProfessionalDetails')->name('addProfessionalDetails');
         Route::post('/demographic', 'addDemographicDetails')->name('addDemographicDetails');
         Route::post('/documents', 'addDocuments')->name('addDocuments');
+        Route::get('/getme', 'getMe')->name('getMe');
 
     });
 

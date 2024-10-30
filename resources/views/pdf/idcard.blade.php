@@ -5,7 +5,7 @@
     <title>Student ID Card</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <style type="text/css">
+    <style>
         .footer {
             position: fixed;
             left: 0;
@@ -52,25 +52,19 @@
             width: 700px;
         }
     </style>
-    @php
-        $image = $student->image ?? '';
-    @endphp
+
 </head>
 
 
 
 
+<body>
 
-<img src="{{$image }}" height="100" width="100" />
-
-
-
-<body class="border">
-
-    <div style="display: flex; flex-direction: column; gap: 1rem">
+    <div>
         <div style=" display: flex; flex-direction: row; gap: 1rem">
-            <div><img alt="Logo" src="assets/images/Frame 24.png"
-                    style="float: left;width: 100px; padding-left: 40px;" /></div>
+            <div style="float: left;width: 150px; padding-left: 2px;"><img alt="Logo"
+                    style="width: 150px; padding-left: 2px;" src="assets/images/Frame 24.png" />
+            </div>
             <div style=" text-align: center;padding-left: 20px;padding-top: 50px;">
                 <div style="display: flex; flex-direction: row;">
                     <img alt="Logo" src="assets/images/Frame 7.png" style="width: 50px;" />

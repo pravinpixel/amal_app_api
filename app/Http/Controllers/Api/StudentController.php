@@ -172,6 +172,16 @@ class StudentController extends Controller
         }
     }
 
+    public function getMe(Request $request)
+    {
+        $student = auth('api')->user();
+        $student = Student::where('id', $student->id)->with('academic', 'demographic', 'professional', 'documents')->first();
+        if (!$student) {
+            return $this->returnError('Student not found');
+        }
+        return $this->returnSuccess($student, "student data retrived successfully");
+    }
+
 
     public function createRandomToken(Request $request)
     {

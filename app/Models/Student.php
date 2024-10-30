@@ -63,6 +63,11 @@ class Student extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(DemographicDetail::class, 'studentId', 'id');
     }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'studentId', 'id');
+    }
 }
 
 
