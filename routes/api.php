@@ -31,6 +31,7 @@ Route::group([
     Route::prefix('student')->controller(StudentController::class)->group(function () {
         Route::post('/', 'viewStudent')->name('view');
         Route::post('/academic', 'addAcademicDetails')->name('addAcademicDetails');
+        Route::post('/personal', 'addPersonalDetails')->name('addPersonalDetails');
         Route::post('/professional', 'addProfessionalDetails')->name('addProfessionalDetails');
         Route::post('/demographic', 'addDemographicDetails')->name('addDemographicDetails');
         Route::post('/documents', 'addDocuments')->name('addDocuments');

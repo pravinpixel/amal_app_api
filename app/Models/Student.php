@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -40,6 +41,13 @@ class Student extends Authenticatable implements JWTSubject
         'status',
         'deleted',
     ];
+
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => ($value == NUll) ? NUll : config('app.image_url') . $value,
+        );
+    }
 
     public function academic()
     {

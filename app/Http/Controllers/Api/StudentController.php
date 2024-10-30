@@ -459,7 +459,34 @@ class StudentController extends Controller
             return $this->returnError($e->getMessage());
         }
     }
+    public function addPersonalDetails(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'studentId' => 'required|integer|exists:students,id',
+                'email' => 'required|string|max:255',
+                'phoneNumber' => 'required|string|max:255',
+                'maritalStatus' => 'required|integer',
+            ]);
 
+            if ($validator->fails()) {
+                return $this->returnError($validator->errors());
+            }
+            $student = Student::where('id', $request->studentId)->first();
+            if ($student) {
+                $student->update([
+                    'email' => $request->email,
+                    'phoneNumber' => $request->phoneNumber,
+                    'maritalStatus' => $request->maritalStatus,
+                ]);
+                return $this->returnSuccess($student, 'Personal Detail Updated Successfully');
+            } else {
+                return $this->returnError('Student Not Found');
+            }
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
+    }
     public function addDocuments(Request $request)
     {
         try {
