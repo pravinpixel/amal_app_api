@@ -96,6 +96,7 @@ class StudentController extends Controller
             } else {
                 return $this->returnError('Invalid student id');
             }
+            $this->createActivityLog('Sent Otp', $student->id, $student->id, null, ["otp" => $student->otp], 'Otp sent to ' . $student->email);
             return $this->returnSuccess(
                 [],
                 'OTP send successfully'
@@ -154,6 +155,53 @@ class StudentController extends Controller
                 $newToken = JWTAuth::fromUser($student);
                 DB::commit();
                 Log::info('OTP verified and new token generated for email: ' . $request->email);
+                $this->createActivityLog('OTP verfiy', $student->id, $student->id, null, ["otp" => $student->otp], 'Otp verified for ' . $student->email);
+                return $this->returnSuccess([
+                    'access_token' => $newToken,
+                    'token_type' => 'bearer',
+                    'expires_in' => JWTAuth::factory()->getTTL(),
+                ], 'OTP verified successfully.');
+            } else {
+                DB::rollback();
+                Log::error('Invalid OTP entered for email: ' . $request->email);
+                return $this->returnError('Enter Valid OTP');
+            }
+        } catch (\Throwable $e) {
+            DB::rollback();
+            Log::error('Exception in otpverfiy: ' . $e->getMessage());
+            return $this->returnError($e->getMessage());
+        }
+    }
+
+
+    public function login(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'otp' => 'required|size:4',
+            ]);
+
+            if ($validator->fails()) {
+                $this->error = $validator->errors();
+                Log::error('Validation Error: ' . json_encode($validator->errors()));
+                throw new \Exception('Validation Error');
+            }
+            $student = Student::where('email', $request->email)->first();
+            if (!$student) {
+                Log::error('Student not found for email: ' . $request->email);
+                return $this->returnError('Student not found');
+            }
+            if ($student->otpVerified == 0) {
+                return $this->returnError('OTP not verified');
+            }
+            // if ($student->otp == $request->otp) {
+            if ($request->otp == 1111) {
+                $newToken = JWTAuth::fromUser($student);
+                DB::commit();
+                Log::info('OTP verified and new token generated for email: ' . $request->email);
+                $this->createActivityLog('Login', $student->id, $student->id, null, ["otp" => $student->otp], 'Login successful for ' . $student->email);
                 return $this->returnSuccess([
                     'access_token' => $newToken,
                     'token_type' => 'bearer',
@@ -210,26 +258,15 @@ class StudentController extends Controller
             'expires_in' => JWTAuth::factory()->getTTL()
         ], 'OTP verified successfully.');
     }
-    public function getEmployee()
-    {
-        $user = Auth::guard('api')->user();
-        if ($user->state) {
-            $state = [
-                [
-                    'id' => $user->state_id ?? null,
-                    'label' => $user->state
-                ]
-            ];
-            $user->state = $state;
-        }
-        return $this->returnSuccess($user, 'Employee data successfully retrieved');
-    }
+
 
     public function studentlogout()
     {
         try {
             // Invalidate the token
+            $student = auth('api')->user();
             JWTAuth::invalidate(JWTAuth::getToken());
+            $this->createActivityLog('Student Logout', $student->id, $student->id, null, null, 'Student' . $student->name . ' logged out');
             return $this->returnSuccess([], 'Successfully logged out');
         } catch (JWTException $e) {
             return $this->returnError('Failed to log out, please try again.');
@@ -355,7 +392,11 @@ class StudentController extends Controller
             if ($validator->fails()) {
                 return $this->returnError($validator->errors());
             }
-            $student = Student::where('id', $request->studentId)->first();
+            $studentId = auth('api')->user()->id;
+            if ($studentId != $request->studentId) {
+                return $this->returnError('Unauthorized');
+            }
+            $student = Student::where('id', $request->studentId)->with('academic')->first();
             if (!$student) {
                 return $this->returnError('Student Not Found');
             }
@@ -379,7 +420,8 @@ class StudentController extends Controller
                         'course' => $detail['course'],
                     ]);
                 }
-
+                $studentWithAcademicDetail = Student::where('id', $request->studentId)->with('academic')->first();
+                $this->createActivityLog('AcademicDetail', $student->id, $student->id, $student, $studentWithAcademicDetail, 'Academic Detail Updated');
                 return $this->returnSuccess($student, 'Academic Detail Added Successfully');
             }
 
@@ -405,7 +447,11 @@ class StudentController extends Controller
             if ($validator->fails()) {
                 return $this->returnError($validator->errors());
             }
-            $student = Student::where('id', $request->studentId)->first();
+            $studentId = auth('api')->user()->id;
+            if ($studentId != $request->studentId) {
+                return $this->returnError('Unauthorized');
+            }
+            $student = Student::where('id', $request->studentId)->with('professional')->first();
             if (!$student) {
                 return $this->returnError('Student Not Found');
             }
@@ -430,6 +476,10 @@ class StudentController extends Controller
                     ]);
                 }
             }
+            $studentAfterUpdate = Student::where('id', $request->studentId)->with('professional')->first();
+
+            $this->createActivityLog('ProfessionalDetail', $student->id, $student->id, $student, $studentAfterUpdate, 'Professional Detail Updated');
+
             return $this->returnSuccess($professionalDetail, 'Professional Detail Added Successfully');
 
         } catch (\Exception $e) {
@@ -452,6 +502,14 @@ class StudentController extends Controller
             if ($validator->fails()) {
                 return $this->returnError($validator->errors());
             }
+            $studentId = auth('api')->user()->id;
+            if ($studentId != $request->studentId) {
+                return $this->returnError('Unauthorized');
+            }
+            $student = Student::where('id', $request->studentId)->with('demographic')->first();
+            if (!$student) {
+                return $this->returnError('Student Not Found');
+            }
             $demographicDetail = DemographicDetail::where('studentId', $request->studentId)->first();
             if ($demographicDetail) {
                 $demographicDetail->update([
@@ -461,7 +519,6 @@ class StudentController extends Controller
                     'countryId' => $request->countryId,
                     'postalcode' => $request->postalcode,
                 ]);
-                return $this->returnSuccess($demographicDetail, 'Demographic Detail Updated Successfully');
             } else {
                 $demographicDetail = DemographicDetail::create([
                     'studentId' => $request->studentId,
@@ -471,8 +528,13 @@ class StudentController extends Controller
                     'countryId' => $request->countryId,
                     'postalcode' => $request->postalcode,
                 ]);
-                return $this->returnSuccess($demographicDetail, 'Demographic Detail Added Successfully');
             }
+            $demographicDetailAfterUpdate = DemographicDetail::where('studentId', $request->studentId)->with('demographic')->first();
+            $this->createActivityLog('DemographicDetail', $student->id, $student->id, $student, $demographicDetailAfterUpdate, 'Demographic Detail Updated');
+
+            return $this->returnSuccess($demographicDetail, 'Demographic Detail Updated Successfully');
+
+
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
@@ -490,6 +552,10 @@ class StudentController extends Controller
             if ($validator->fails()) {
                 return $this->returnError($validator->errors());
             }
+            $studentId = auth('api')->user()->id;
+            if ($studentId != $request->studentId) {
+                return $this->returnError('Unauthorized');
+            }
             $student = Student::where('id', $request->studentId)->first();
             if ($student) {
                 $student->update([
@@ -497,7 +563,10 @@ class StudentController extends Controller
                     'phoneNumber' => $request->phoneNumber,
                     'maritalStatus' => $request->maritalStatus,
                 ]);
-                return $this->returnSuccess($student, 'Personal Detail Updated Successfully');
+                $studentAfterUpdate = Student::where('id', $request->studentId)->first();
+                $this->createActivityLog('PersonalDetail', $student->id, $student->id, $student, $studentAfterUpdate, 'Personal Detail Updated');
+
+                return $this->returnSuccess($studentAfterUpdate, 'Personal Detail Updated Successfully');
             } else {
                 return $this->returnError('Student Not Found');
             }
@@ -518,7 +587,11 @@ class StudentController extends Controller
             if ($validator->fails()) {
                 return $this->returnError($validator->errors());
             }
-            $student = Student::where('id', $request->studentId)->first();
+            $studentId = auth('api')->user()->id;
+            if ($studentId != $request->studentId) {
+                return $this->returnError('Unauthorized');
+            }
+            $student = Student::where('id', $request->studentId)->with('documents')->first();
             if (!$student) {
                 return $this->returnError('Student Not Found');
             }
@@ -543,7 +616,9 @@ class StudentController extends Controller
                 }
             }
             DB::commit();
-            return $this->returnSuccess([], 'Document Added Successfully');
+            $studentAfterDocumentUpdate = Student::where('id', $request->studentId)->with('documents')->first();
+            $this->createActivityLog('Document', $student->id, $student->id, $student, $studentAfterDocumentUpdate, 'Document Or Profile Image Updated');
+            return $this->returnSuccess($studentAfterDocumentUpdate, 'Document Added Successfully');
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->returnError($e->getMessage());

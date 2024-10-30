@@ -19,6 +19,7 @@ Route::group([
     Route::post('studentData', [StudentController::class, 'uploadStudentData'])->name('uploadStudentData');
     Route::post('emailverify', [StudentController::class, 'emailverfiy'])->name('emailverfiy');
     Route::post('otpverify', [StudentController::class, 'otpverify'])->name('otpverify');
+    Route::post('login', [StudentController::class, 'login'])->name('login');
     Route::post('logout', [StudentController::class, 'studentlogout'])->name('studentlogout');
 });
 

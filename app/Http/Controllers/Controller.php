@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\ActivityLog;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -47,5 +48,17 @@ class Controller extends BaseController
             'message' => $message,
             'data' => $data
         ];
+    }
+
+    public function createActivityLog($module, $moduleId, $doneBy, $oldValue, $newValue, $message)
+    {
+        ActivityLog::create([
+            'module' => $module,
+            'moduleId' => $moduleId,
+            'doneBy' => $doneBy,
+            'oldValue' => $oldValue,
+            'newValue' => $newValue,
+            'message' => $message
+        ]);
     }
 }
