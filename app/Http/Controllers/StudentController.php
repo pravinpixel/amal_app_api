@@ -28,7 +28,6 @@ class StudentController extends Controller
                         ->orWhere('phoneNumber', 'like', '%' . $search . '%');
                 });
             }
-            dump($status);
             if ($status) {
                 $student->where('status', $status);
             }

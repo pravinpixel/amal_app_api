@@ -609,8 +609,13 @@ class StudentController extends Controller
             }
             if ($request->hasFile('profileImage')) {
                 $image = $request->file('profileImage');
-                $image = $request->file('profileImage');
                 $path = $this->storeImage($image, 'profile');
+                if ($student->image) {
+                    $url = ltrim(str_replace(url('storage/'), '', $student->image), '/');
+                    if (Storage::disk('public')->exists($url)) {
+                        Storage::disk('public')->delete($url);
+                    }
+                }
                 $student->image = $path;
                 $student->save();
             }

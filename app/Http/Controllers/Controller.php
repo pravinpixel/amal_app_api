@@ -18,7 +18,7 @@ class Controller extends BaseController
 
     public function storeImage($image, $folder, $quality = 90)
     {
-        $imageName = time() . '.' . ".webp";
+        $imageName = time() . '.' . "webp";
         $img = Image::make($image)->orientate()->encode('webp', 100);
         $path = $folder . '/' . $imageName;
         Storage::disk('public')->put($path, (string) $img);
