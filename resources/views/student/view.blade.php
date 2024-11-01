@@ -7,7 +7,8 @@
 <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
     <div id="kt_app_toolbar_container" class="app-container container-xxl d-flex flex-stack">
         <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-            <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Student</h1>
+            <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">View Student
+            </h1>
             <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                 <li class="breadcrumb-item text-muted">
                     <a href="{{url('dashboard')}}" class="text-muted text-hover-primary">Home</a>
@@ -17,7 +18,7 @@
                 </li>
                 <li class="breadcrumb-item text-muted">
                     <a href="{{url('student/register-list')}}" class="text-muted text-hover-primary">
-                        Student</a>
+                        View Student</a>
                 </li>
             </ul>
         </div>
@@ -26,7 +27,7 @@
 <div class="card mb-5 mb-xl-8">
     <div class="card-header border-0 pt-5">
         <h3 class="card-title align-items-start flex-column">
-            <span class="card-label fw-bold fs-3 mb-1"> View Student</span>
+            <span class="card-label fw-bold fs-3 mb-1"> Basic Details</span>
         </h3>
         <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top">
             <a href="{{url('student/register-list')}}"
@@ -472,10 +473,13 @@
                 </h3>
                 <div class="row mt-10">
                     @foreach ($student->documents as $key => $document)
-                        <div class="col-md-2 mb-5" style="display: flex; justify-content: center;">
-                            <a href="{{url($document->document)}}" class="btn btn-light-primary fw-bold"
-                                download="{{ basename($document->document) }}"
-                                target="_blank">{{ basename($document->document) }}</a>
+                        <div class="col-md-2 mb-5"
+                            style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <a href="{{url($document->document)}}" target="_blank">
+                                <img src="{{asset('/images/file.svg')}}" width="35" height="35"
+                                    alt="{{ basename($document->document) }}" />
+                            </a>
+                            <span style="font-size: 12px;">{{ basename($document->document) }}</span>
                         </div>
                     @endforeach
                 </div>
