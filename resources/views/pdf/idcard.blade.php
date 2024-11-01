@@ -91,7 +91,8 @@
         <div class="footer " style="display: flex; flex-direction: row; gap: 1rem; height: 200px;">
             <div><img alt="Logo" src="assets/images/Frame 7.png" style="float: left;width: 150px;" /></div>
             <div style=" text-align: left;padding-left: 20px;">
-                <h2>AMALORPAVAM SCHOOL</h2>
+                <h2 style="font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
+                    AMALORPAVAM SCHOOL</h2>
                 <h4 style="margin-top: -1.5rem;">Alumini Assosiation!</h4>
             </div>
         </div>
