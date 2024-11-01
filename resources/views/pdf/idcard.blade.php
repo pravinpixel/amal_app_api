@@ -66,8 +66,10 @@
             </div>
             <div style=" text-align: center;">
                 <div style="padding-top:90px">
-                    <img alt="Logo" src="assets/images/Amalorpavam.png" style="width: 50px;padding-right: 20px;" />
-                    <img alt="Logo" src="assets/images/Isolation_Mode.png" style="width: 50px;padding-left:20px" />
+                    <img alt="Logo" src="assets/images/Isolation_Mode.png"
+                        style="width: 50px; height: 50px;padding-left:20px" />
+                    <img alt="Logo" src="assets/images/Amalorpavam.png"
+                        style="width: 50px;height: 50px;padding-right: 20px;" />
                 </div>
                 <div>
                     @if(isset($student->image) && !empty($student->image))
