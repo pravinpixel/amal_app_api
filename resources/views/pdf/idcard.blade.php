@@ -59,27 +59,31 @@
 
 
 <body>
-
-    <div>
-        <div style=" display: flex; flex-direction: row; gap: 1rem">
-            <div style="float: left;width: 150px; padding-left: 2px;"><img alt="Logo"
-                    style="width: 150px; padding-left: 2px;" src="assets/images/Frame 24.png" />
+    <div class="border">
+        <div style=" display: flex; flex-direction: row; gap: 1rem; height:1000px">
+            <div style="float:left"><img alt="Logo" style=" padding-left: 50px;height: 700px;"
+                    src="assets/images/Frame 24.png" />
             </div>
-            <div style=" text-align: center;padding-left: 20px;padding-top: 50px;">
-                <div style="display: flex; flex-direction: row;">
-                    <img alt="Logo" src="assets/images/Frame 7.png" style="width: 50px;" />
-                    <img alt="Logo" src="assets/images/Frame 7.png" style="width: 50px;" />
+            <div style=" text-align: center;">
+                <div style="padding-top:90px">
+                    <img alt="Logo" src="assets/images/Frame 7.png" style="width: 50px;padding-right: 20px;" />
+                    <img alt="Logo" src="assets/images/Frame 7.png" style="width: 50px;padding-left:20px" />
                 </div>
 
-                <img src="https://testimonial-api.designonline.in/storage/customer/image_66a36545056ec_1721984325.png"
-                    style="width: 400px;  object-fit: cover;" />
-                <h1 style="color: rgb(20, 65, 119);">{{ $student->name }}</h1>
-                <p>DOB:{{ $student->dob }}</p>
+                <img alt="Student Image"
+                    src="data:image/png;base64,{{ base64_encode(file_get_contents($student->image)) }}"
+                    style="width: 400px;  object-fit: cover; padding-top: 50px;" />
+                <h1
+                    style="color: rgb(20, 65, 119);font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
+                    {{ $student->name }}
+                </h1>
+                <p style="font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
+                    DOB:{{ \Carbon\Carbon::parse($student->dob)->format('d M Y') }}</p>
             </div>
         </div>
 
 
-        <div class="footer " style="display: flex; flex-direction: row; gap: 1rem">
+        <div class="footer " style="display: flex; flex-direction: row; gap: 1rem; height: 200px;">
             <div><img alt="Logo" src="assets/images/Frame 7.png" style="float: left;width: 150px;" /></div>
             <div style=" text-align: left;padding-left: 20px;">
                 <h2>AMALORPAVAM SCHOOL</h2>

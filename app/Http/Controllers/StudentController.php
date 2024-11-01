@@ -28,10 +28,10 @@ class StudentController extends Controller
                         ->orWhere('phoneNumber', 'like', '%' . $search . '%');
                 });
             }
-            // dump($status);
-            // if ($status) {
-            //     $student->where('status', $status);
-            // }
+            dump($status);
+            if ($status) {
+                $student->where('status', $status);
+            }
             $result = $student->orderBy('id', 'desc')->paginate($perPage);
             return view('student.index', ['students' => $result]);
         } catch (\Exception $e) {
