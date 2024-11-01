@@ -69,11 +69,15 @@
                     <img alt="Logo" src="assets/images/Frame 7.png" style="width: 50px;padding-right: 20px;" />
                     <img alt="Logo" src="assets/images/Frame 7.png" style="width: 50px;padding-left:20px" />
                 </div>
+                <div>
+                    @if(isset($student->image) && !empty($student->image))
+                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents($student->image)) }}"
+                            style="width: 400px;  object-fit: cover; padding-top: 50px;" />
+                    @else
+                        <img src="assets/images/dummy.png" style="width: 400px;  object-fit: cover; padding-top: 50px;" />
+                    @endif
+                </div>
 
-                @if(isset($student->image) && !empty($student->image))
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents($student->image)) }}"
-                        style="width: 400px;height: 600px;  object-fit: cover; padding-top: 50px;" />
-                @endif
                 <h1
                     style="color: rgb(20, 65, 119);font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
                     {{ $student->name }}
