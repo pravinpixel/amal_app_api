@@ -153,8 +153,7 @@ class StudentController extends Controller
             //     Log::error('OTP has expired for email: ' . $request->email);
             //     return $this->returnError('OTP has expired');
             // }
-            // if ($student->otp == $request->otp) {
-            if ($request->otp == 1111) {
+            if ($student->otp == $request->otp) {
                 $student->otpVerified = 1;
                 $student->save();
                 $newToken = JWTAuth::fromUser($student);
@@ -201,8 +200,7 @@ class StudentController extends Controller
             if ($student->otpVerified == 0) {
                 return $this->returnError('OTP not verified');
             }
-            // if ($student->otp == $request->otp) {
-            if ($request->otp == 1111) {
+            if ($student->otp == $request->otp) {
                 $newToken = JWTAuth::fromUser($student);
                 DB::commit();
                 Log::info('OTP verified and new token generated for email: ' . $request->email);

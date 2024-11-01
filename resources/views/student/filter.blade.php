@@ -26,8 +26,8 @@
             </div>
             <div class="w-200px me-3">
                 <select class="form-select" data-allow-clear="true" data-control="select2"
-                    data-placeholder="Select Language" name="language">
-                    <option value="">Select Language</option>
+                    data-placeholder="Select Stautus" name="status">
+                    <option value="">Select Status</option>
                     <option value="test">test</option>
                 </select>
 
