@@ -84,7 +84,8 @@
                     style="color: rgb(20, 65, 119);font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
                     {{ $student->name }}
                 </h1>
-                <p style="font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
+                <p
+                    style="font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-size: 20px">
                     DOB:{{ \Carbon\Carbon::parse($student->dob)->format('d M Y') }}</p>
             </div>
         </div>
