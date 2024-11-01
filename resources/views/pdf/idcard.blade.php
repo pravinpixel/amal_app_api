@@ -93,7 +93,9 @@
             <div style=" text-align: left;padding-left: 20px;">
                 <h2 style="font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
                     AMALORPAVAM SCHOOL</h2>
-                <h4 style="margin-top: -1.5rem;">Alumini Assosiation!</h4>
+                <h4
+                    style="margin-top: -1.5rem;font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
+                    Alumini Assosiation!</h4>
             </div>
         </div>
     </div>
