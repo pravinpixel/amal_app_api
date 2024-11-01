@@ -91,7 +91,7 @@
         </div>
 
 
-        <div class="footer " style="display: flex; flex-direction: row; gap: 1rem; height: 200px;">
+        <div class="footer " style="display: flex; flex-direction: row; gap: 1rem; height: 150px;">
             <div><img alt="Logo" src="assets/images/Frame 7.png" style="float: left;width: 150px;" /></div>
             <div style=" text-align: left;padding-left: 20px;">
                 <h2 style="font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
