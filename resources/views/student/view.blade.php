@@ -419,50 +419,68 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row mt-10">
-                <div class="col-md-6" style="display: flex">
-                    <div class="col-md-5 mt-3">
-                        <label class="form-label">Address Line2 :</label>
+                <div class="row mt-10">
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Address Line2 :</label>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" name="addressLine2" placeholder="Address Line2"
+                                class="required form-control " value="{{ $student->demographic->addressLine2 ?? '' }}"
+                                autocomplete="off" readonly />
+                            <span class="field-error" style="color:red" id="addressLine2-error"></span>
+                        </div>
                     </div>
-                    <div class="col-md-7">
-                        <input type="text" name="addressLine2" placeholder="Address Line2"
-                            class="required form-control " value="{{ $student->demographic->addressLine2 ?? '' }}"
-                            autocomplete="off" readonly />
-                        <span class="field-error" style="color:red" id="addressLine2-error"></span>
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Country:</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-select" data-allow-clear="true" data-control="select2"
+                                data-placeholder="Select Country" name="countryId" disabled>
+                                <option value="">Select Country</option>
+                                @foreach($countries as $country)
+                                    <option value="{{ $country->id }}" {{ isset($student) && $student->demographic->countryId == $country->id ? 'selected' : '' }}>
+                                        {{ $country->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <span class="field-error" style="color:red" id="country-error"></span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6" style="display: flex">
-                    <div class="col-md-5 mt-3">
-                        <label class="form-label">Country:</label>
+                <div class="row mt-10">
+                    <div class="col-md-6" style="display: flex">
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label">Postal Code :</label>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" name="postalcode" placeholder="Postal Code"
+                                class="required form-control " value="{{ $student->demographic->postalcode ?? '' }}"
+                                autocomplete="off" readonly />
+                            <span class="field-error" style="color:red" id="postalcode-error"></span>
+                        </div>
                     </div>
-                    <div class="col-md-7">
-                        <select class="form-select" data-allow-clear="true" data-control="select2"
-                            data-placeholder="Select Country" name="countryId" disabled>
-                            <option value="">Select Country</option>
-                            @foreach($countries as $country)
-                                <option value="{{ $country->id }}" {{ isset($student) && $student->demographic->countryId == $country->id ? 'selected' : '' }}>
-                                    {{ $country->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="field-error" style="color:red" id="country-error"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-10">
-                <div class="col-md-6" style="display: flex">
-                    <div class="col-md-5 mt-3">
-                        <label class="form-label">Postal Code :</label>
-                    </div>
-                    <div class="col-md-7">
-                        <input type="text" name="postalcode" placeholder="Postal Code" class="required form-control "
-                            value="{{ $student->demographic->postalcode ?? '' }}" autocomplete="off" readonly />
-                        <span class="field-error" style="color:red" id="postalcode-error"></span>
-                    </div>
+
                 </div>
 
+
             </div>
+            <div class="row mt-10 mb-20">
+                <h3 class="card-title align-items-start flex-column ">
+                    <span class="card-label fw-bold fs-3 mb-1">Documents</span>
+                </h3>
+                <div class="row mt-10">
+                    @foreach ($student->documents as $key => $document)
+                        <div class="col-md-2 mb-5" style="display: flex; justify-content: center;">
+                            <a href="{{url($document->document)}}" class="btn btn-light-primary fw-bold"
+                                download="{{ basename($document->document) }}"
+                                target="_blank">{{ basename($document->document) }}</a>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
     </div>
     </form>
 </div>

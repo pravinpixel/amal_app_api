@@ -91,7 +91,9 @@ class StudentController extends Controller
                 if ($onemiutecount < 3 && $onehourcount < 30) {
                     $otp = $this->generateOtp($student->id);
                     $student->otp = $otp;
-                    if (isset($student->email) && $request->email) {
+                    $student->email = $request->email;
+                    $student->phoneNumber = $request->phoneNumber;
+                    if (isset($request->email) && $request->email) {
                         $data = explode('@', $student->email);
                         Mail::to($student->email)->send(new EmailVerfiy($otp, $data[0]));
                     } else if (isset($student->phoneNumber) && $request->phoneNumber) {
