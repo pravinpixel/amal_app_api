@@ -77,6 +77,9 @@ class StudentController extends Controller
                 );
             }
             if ($student) {
+                if ($student->otpVerified == 1) {
+                    return $this->returnError('Student already registered. Please login');
+                }
                 $oneMinuteAgo = Carbon::now()->subMinute();
                 $oneHourAgo = Carbon::now()->subHour();
                 $onemiutecount = Otp::where('email', $student->email)
