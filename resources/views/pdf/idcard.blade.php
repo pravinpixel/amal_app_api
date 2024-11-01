@@ -61,7 +61,7 @@
 <body>
     <div class="border">
         <div style=" display: flex; flex-direction: row; gap: 1rem; height:1000px">
-            <div style="float:left"><img alt="Logo" style=" padding-left: 50px;height: 700px;"
+            <div style="float:left"><img alt="Logo" style=" padding-left: 50px;height: 800px;"
                     src="assets/images/Frame 24.png" />
             </div>
             <div style=" text-align: center;">
