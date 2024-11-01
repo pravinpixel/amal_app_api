@@ -28,7 +28,8 @@
                 <select class="form-select" data-allow-clear="true" data-control="select2"
                     data-placeholder="Select Stautus" name="status">
                     <option value="">Select Status</option>
-                    <option value="test">test</option>
+                    <option value=1>Active</option>
+                    <option value=0>Inactive</option>
                 </select>
 
             </div>

@@ -156,9 +156,9 @@
                                                         <i class="fa fa-eye"></i>
                                                     </a>
                                                     <!-- <a href="{{route('student.edit', $student->id)}}"
-                                                                                class="btn btn-icon btn-active-primary btn-light-primary mx-1 w-30px h-30px ">
-                                                                                <i class="fa fa-edit"></i>
-                                                                            </a> -->
+                                                                                                                        class="btn btn-icon btn-active-primary btn-light-primary mx-1 w-30px h-30px ">
+                                                                                                                        <i class="fa fa-edit"></i>
+                                                                                                                    </a> -->
                                                     <button type="button"
                                                         class="btn btn-icon btn-active-danger btn-light-danger mx-1 w-30px h-30px deletestudentBtn"
                                                         data-student-id="{{ $student->id }}">
@@ -204,7 +204,7 @@
         $(document).on('change', '[name="state"]', function (e) {
             updateTableData();
         });
-        $(document).on('change', '[name="language"]', function (e) {
+        $(document).on('change', '[name="status"]', function (e) {
             updateTableData();
         });
         $(document).on('change', '[name="testimonial_category"]', function (e) {
@@ -222,27 +222,27 @@
             $('#searchInput').val('');
             $('[name="testimonial_category"]').val('');
             $('[name="state"]').val('');
-            $('[name="language"]').val('');
+            $('[name="status"]').val('');
             $('[name="insurance_type"]').val('');
         });
         function updateTableData(page = '') {
             var searchTerm = $('#searchInput').val();
             var insurance_type = $('[name="insurance_type"]').val();
             var state = $('[name="state"]').val();
-            var language = $('[name="language"]').val();
+            var status = $('[name="status"]').val();
             var testimonial_category = $('[name="testimonial_category"]').val();
-            loadTableData(searchTerm, insurance_type, state, testimonial_category, language, page);
+            loadTableData(searchTerm, insurance_type, state, testimonial_category, status, page);
         }
         updateTableData();
-        function loadTableData(searchTerm, insurance_type, state, testimonial_category, language, page = '') {
+        function loadTableData(searchTerm, insurance_type, state, testimonial_category, status, page = '') {
             $.ajax({
-                url: routename + "?search=" + searchTerm + "&insurance_type=" + insurance_type + "&language=" + language + "&testimonial_category=" + testimonial_category + "&page=" + page + "&state=" + state,
+                url: routename + "?search=" + searchTerm + "&insurance_type=" + insurance_type + "&status=" + status + "&testimonial_category=" + testimonial_category + "&page=" + page + "&state=" + state,
                 type: "GET",
                 data: {
                     search: searchTerm,
                     insurance_type: insurance_type,
                     state: state,
-                    language: language,
+                    status: status,
                     testimonial_category: testimonial_category,
                     page: page
                 },

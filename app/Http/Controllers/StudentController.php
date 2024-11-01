@@ -18,6 +18,7 @@ class StudentController extends Controller
     {
         try {
             $search = $request->input('search');
+            $status = $request->input('status');
             $perPage = 10;
             $student = Student::query();
             if ($search) {
@@ -27,6 +28,10 @@ class StudentController extends Controller
                         ->orWhere('phoneNumber', 'like', '%' . $search . '%');
                 });
             }
+            // dump($status);
+            // if ($status) {
+            //     $student->where('status', $status);
+            // }
             $result = $student->orderBy('id', 'desc')->paginate($perPage);
             return view('student.index', ['students' => $result]);
         } catch (\Exception $e) {
