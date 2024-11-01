@@ -72,7 +72,7 @@
                 <div>
                     @if(isset($student->image) && !empty($student->image))
                         <img src="data:image/png;base64,{{ base64_encode(file_get_contents($student->image)) }}"
-                            height="500px" width="400px" style="object-fit: cover; padding-top: 50px;" />
+                            height="400px" width="400px" style="object-fit: cover; padding-top: 50px;" />
                     @else
                         <img src="assets/images/dummy.png" style="width: 400px;  object-fit: cover; padding-top: 50px;" />
                     @endif
