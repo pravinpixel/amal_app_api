@@ -85,7 +85,7 @@
                     {{ $student->name }}
                 </h1>
                 <p
-                    style="font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-size: 20px">
+                    style="font-family: 'Excon', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-size: 30px">
                     DOB:{{ \Carbon\Carbon::parse($student->dob)->format('d M Y') }}</p>
             </div>
         </div>
