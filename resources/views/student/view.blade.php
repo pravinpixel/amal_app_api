@@ -232,8 +232,7 @@
                             <div class="card-body text-center pt-0">
                                 <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
                                     data-kt-image-input="true" @if(isset($student->image) && !empty($student->image))
-                                    style="background-image: url('{{ url('storage/' . $student->image) }}')" @else
-                                    style="" @endif>
+                                    style="background-image: url('{{ url($student->image) }}')" @else style="" @endif>
                                     <div class="image-input-wrapper w-150px h-150px"></div>
                                 </div>
                             </div>
